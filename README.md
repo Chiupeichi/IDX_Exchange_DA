@@ -9,7 +9,6 @@ The goal of Week 1 is to combine all monthly CRMLS Listing and Sold datasets fro
 
 ---
 
-```
 
 ---
 
