@@ -43,44 +43,6 @@ Load and concatenate every monthly MLS file from **January 2024 through the most
 4. **Filter** to `PropertyType == 'Residential'`.
 5. **Save** the combined Residential dataset to a new CSV.
 
-### Example workflow (`week1_listings.py`)
-```python
-import pandas as pd
-from pathlib import Path
-
-folder = Path(".")
-listing_files = sorted(
-    file
-    for file in folder.glob("CRMLSListing20*.csv")
-    if "_filled" not in file.name   # skip filled working copies, keep raw monthly files
-)
-
-# Read each monthly file
-frames = [pd.read_csv(file) for file in listing_files]
-print("Files found:", len(frames))
-print("Rows before concat (sum of files):", sum(len(df) for df in frames))
-
-# Combine
-listing = pd.concat(frames, ignore_index=True)
-print("Rows after concat:", len(listing))
-
-# Filter to Residential only
-before = len(listing)
-listing = listing[listing["PropertyType"] == "Residential"]
-print("Rows before Residential filter:", before)
-print("Rows after Residential filter:", len(listing))
-
-# Save
-listing.to_csv("combined_listing_202401_202604_residential.csv", index=False)
-```
-The `week1_sold.py` script follows the same pattern on the `CRMLSSold20*.csv` files.
-
-### How to run
-```bash
-# place the CRMLSSold*.csv / CRMLSListing*.csv files in the working directory (or csv/ folder)
-python week1_sold.py
-python week1_listings.py
-```
 
 ### Outputs
 - `combined_sold_202401_202604_residential.csv` — combined, Residential-filtered Sold dataset
