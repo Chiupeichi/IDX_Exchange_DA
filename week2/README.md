@@ -9,17 +9,12 @@ This script performs exploratory data analysis (EDA) and data preparation for th
 - Identify unique property types.
 - Examine dataset dimensions and variable types.
 
-### 2. Data Filtering
-- Apply the required filtering criteria.
-- Create filtered datasets for analysis.
-- Save the filtered datasets as new CSV files.
-
-### 3. Missing Value Analysis
+### 2. Missing Value Analysis
 - Generate a null-count summary table.
 - Calculate the percentage of missing values for each variable.
 - Identify columns with more than 90% missing values.
 
-### 4. Numeric Distribution Analysis
+### 3. Numeric Distribution Analysis
 - Generate descriptive statistics (minimum, maximum, mean, median, and percentiles).
 - Visualize distributions using histograms and boxplots.
 - Identify potential extreme outliers for later preprocessing.
