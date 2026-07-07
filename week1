@@ -1,0 +1,59 @@
+import pandas as pd
+from pathlib import Path
+
+folder = Path(".")
+
+
+def build_residential_dataset(prefix, label):
+    """Combine all monthly files for `prefix`, filter to Residential, and save.
+
+    Prints row counts before/after concatenation and before/after the
+    Residential filter so the counts can be confirmed.
+    """
+    # --- Discover monthly files (exclude '_filled' working copies; keep raw files) ---
+    files = sorted(
+        file
+        for file in folder.glob(f"{prefix}20*.csv")
+        if "_filled" not in file.name
+    )
+    print(f"\n=== {label.upper()} ({prefix}) ===")
+    print(f"Monthly files found: {len(files)}")
+
+    # --- Read each monthly file into its own DataFrame ---
+    frames = [pd.read_csv(file) for file in files]
+
+    # Row count BEFORE concatenation = total rows across the separate monthly files
+    rows_before_concat = sum(len(df) for df in frames)
+    print(f"Rows before concatenation (sum of {len(files)} files): {rows_before_concat}")
+
+    # --- Concatenate all months into one combined dataset ---
+    combined = pd.concat(frames, ignore_index=True)
+
+    # Row count AFTER concatenation (should equal the sum above)
+    print(f"Rows after concatenation: {len(combined)}")
+
+    # Row count BEFORE the Residential filter
+    rows_before_filter = len(combined)
+    print(f"Rows before Residential filter: {rows_before_filter}")
+
+    # --- Keep Residential property records only ---
+    combined = combined[combined["PropertyType"] == "Residential"]
+
+    # Row count AFTER the Residential filter
+    print(f"Rows after Residential filter: {len(combined)}")
+
+    # --- Build an output filename that reflects the actual month range present ---
+    first_month = files[0].stem.replace(prefix, "")   # e.g. 202401
+    last_month = files[-1].stem.replace(prefix, "")    # e.g. 202604
+    output_name = f"combined_{label}_{first_month}_{last_month}_residential.csv"
+
+    # --- Save the combined, Residential-filtered dataset as a new CSV ---
+    combined.to_csv(output_name, index=False)
+    print(f"Saved: {output_name}")
+
+    return combined
+
+
+# Build both combined datasets (January 2024 through the most recently completed month)
+sold = build_residential_dataset("CRMLSSold", "sold")
+listing = build_residential_dataset("CRMLSListing", "listing")
