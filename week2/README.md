@@ -1,23 +1,32 @@
-##Week 2
+# Week 2–3: Data Exploration and Preparation
 
-#Objectives
+This script performs exploratory data analysis (EDA) and data preparation for the residential sold and listing datasets.
 
-- Inspect dataset structure
+## Workflow
 
-- Analyze missing values
+### 1. Dataset Overview
+- Load the sold and listing datasets.
+- Identify unique property types.
+- Examine dataset dimensions and variable types.
 
-- Review numeric distributions
+### 2. Data Filtering
+- Apply the required filtering criteria.
+- Create filtered datasets for analysis.
+- Save the filtered datasets as new CSV files.
 
-#Outputs
+### 3. Missing Value Analysis
+- Generate a null-count summary table.
+- Calculate the percentage of missing values for each variable.
+- Identify columns with more than 90% missing values.
 
-- sold_missing_summary.csv
+### 4. Numeric Distribution Analysis
+- Generate descriptive statistics (minimum, maximum, mean, median, and percentiles).
+- Visualize distributions using histograms and boxplots.
+- Identify potential extreme outliers for later preprocessing.
 
-- listing_missing_summary.csv
-
-#Skills
-
-- EDA
-
-- Missing value analysis
-
-- Dataset validation
+## Outputs
+- Filtered sold dataset (.csv)
+- Filtered listing dataset (.csv)
+- Missing value summary
+- Numeric distribution summary
+- Distribution plots (histograms and boxplots)
