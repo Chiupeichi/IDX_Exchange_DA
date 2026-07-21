@@ -16,8 +16,6 @@ monthly Listing and Sold CSV files, narrows the data to residential properties,
 checks quality, enriches records with mortgage rates, removes invalid values,
 and creates metrics that describe price, market speed, and transaction timing.
 
-Current completed scope: **Weeks 1–6**. Weeks 7–12 below are the planned next
-stages of the internship roadmap.
 
 ```mermaid
 flowchart LR
@@ -25,22 +23,10 @@ flowchart LR
     B --> C["Weeks 2–3<br/>Validate data, explore distributions, add mortgage rates"]
     C --> D["Weeks 4–5<br/>Clean dates, numbers, and coordinates"]
     D --> E["Week 6<br/>Create market metrics"]
-    E -. planned .-> F["Week 7<br/>Handle outliers"]
-    F -. planned .-> G["Weeks 8–10<br/>Build Tableau dashboards"]
-    G -. planned .-> H["Weeks 11–12<br/>Present insights and final report"]
+    E --> F["Week 7<br/>Handle outliers"]
+    F --> G["Weeks 8–10<br/>Build Tableau dashboards"]
+    G --> H["Weeks 11–12<br/>Present insights and final report"]
 ```
-
-## MLS, CRMLS, and IDX
-
-- **MLS (Multiple Listing Service)** is a shared database used by real-estate
-  professionals to publish and exchange property listing and transaction data.
-- **CRMLS (California Regional Multiple Listing Service)** is the MLS source for
-  this project. Its records primarily cover California markets. See the
-  [CRMLS overview](https://go.crmls.org/about/) and
-  [coverage area](https://go.crmls.org/coverage-area/).
-- **IDX (Internet Data Exchange)** is the framework that allows approved MLS
-  listing information to appear on brokerage and real-estate websites. See the
-  [CRMLS IDX resources](https://go.crmls.org/idx-resources/).
 
 ### Why “California Residential”?
 
