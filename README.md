@@ -1,63 +1,115 @@
 # IDX Exchange — Data Analyst Internship
 
-This repository contains my project work for the **IDX Exchange Data Analyst Internship**, a 12-week MLS Analytics & Tableau Dashboard program. The internship is structured as a progressive data pipeline: each phase builds on the previous one, taking raw MLS transaction data all the way through cleaning, feature engineering, dashboarding, and final market insights.
+Python workflows for the IDX Exchange MLS Analytics Program. The pipeline
+combines monthly CRMLS files, validates and enriches Residential records,
+cleans invalid observations, and creates Week 6 market metrics.
 
-**Tools:** Python (Pandas), Tableau Desktop
-**Data source:** CoreLogic Trestle API, delivered as monthly MLS Listing & Sold CSV files via the IDX Exchange pipeline
-**Scope:** Residential MLS transactions, January 2024 → most recently completed calendar month
+The repository contains code only. Raw and generated MLS CSV files are
+confidential working data and are intentionally excluded from Git.
 
----
+## Current scope
 
-## Program Overview (Weeks 0–12)
+| Week | Script | Output location |
+| --- | --- | --- |
+| 1 | `week1_aggregation.py` | `outputs/week1/` plus combined Residential CSVs |
+| 2 | `dataset_validation.py` | `outputs/week2/` |
+| 2–3 | `week2_3_mortgage_rates.py` | `outputs/week2_3/` |
+| 4–5 | `data_cleaning.py` | `outputs/week4_5/` |
+| 6 | `week6_feature_engineering.py` | `outputs/week6/` |
 
-| Phase | Week(s) | Focus | What happens |
-|-------|---------|-------|--------------|
-| Orientation | **Week 0** | MLS Data Pipeline | Understand how monthly datasets are produced from the Trestle API and exported to CSV; retrieve pre-generated files via FTP |
-| Data Cleaning | **Week 1** | Monthly Dataset Aggregation | Concatenate all monthly files (Jan 2024 → latest) into combined Sold & Listing datasets; filter to Residential |
-| Data Cleaning | **Weeks 2–3** | Structuring & Validation + Mortgage Enrichment | EDA, missing-value analysis, numeric distributions; merge in the FRED 30-yr fixed mortgage rate on a year-month key |
-| Data Cleaning | **Weeks 4–5** | Cleaning & Preparation | Convert date fields, type numerics, handle missing values, add date-consistency and geographic quality flags |
-| Market Analytics | **Week 6** | Feature Engineering & Market Metrics | Build price ratio, PPSF, days-on-market, YrMo, listing-to-contract / contract-to-close days; add school districts; segment analysis |
-| Market Analytics | **Week 7** | Outlier Detection & Data Quality | Apply IQR filtering to key numeric fields; flag rather than delete; produce flagged + clean datasets |
-| Dashboard Dev | **Weeks 8–10** | Tableau Dashboards | Build `market_analysis.twbx` and `competitive_analysis.twbx` with filterable monthly dashboards |
-| Market Insights | **Weeks 11–12** | Final Presentation & Report | Publish dashboards to Tableau Public, write a 1-page market intelligence report, deliver a 5-min presentation |
+The current monthly source range is January 2024 through June 2026. Week 1
+discovers the latest available month automatically and requires continuous
+monthly coverage beginning in January 2024.
 
-**Final deliverable:** Tableau dashboards + 1-page Market Intelligence Report + presentation.
+## Requirements
 
----
+- Python 3.11 or newer
+- pandas
+- matplotlib
+- Internet access during the Weeks 2–3 mortgage-rate step so the script can
+  download the `MORTGAGE30US` series from FRED
 
-## Week 1 — Monthly Dataset Aggregation
+Install the Python dependencies:
 
-### Objective
-Load and concatenate every monthly MLS file from **January 2024 through the most recently completed calendar month** into two analysis-ready combined datasets (Sold and Listings), filter both to **Residential** properties only, and save the results as new CSVs. This enables trend analysis across multiple months instead of working with one file at a time.
+```bash
+python3 -m pip install -r requirements.txt
+```
 
-### Files in this repo
-| File | Purpose |
-|------|---------|
-| `week1_sold.py` | Combines and filters the monthly **Sold** files (`CRMLSSoldYYYYMM.csv`) |
-| `week1_listings.py` | Combines and filters the monthly **Listing** files (`CRMLSListingYYYYMM.csv`) |
+## Input files
 
-### What each script does
-1. **Discover** every monthly CSV in the folder with `Path().glob()` (`CRMLSListing20*.csv` / `CRMLSSold20*.csv`), excluding `_filled` working copies so only the raw monthly files are combined.
-2. **Read** each file and **concatenate** them into a single DataFrame with `pd.concat(..., ignore_index=True)`.
-3. **Record row counts** before and after concatenation, and before and after the Residential filter.
-4. **Filter** to `PropertyType == 'Residential'`.
-5. **Save** the combined Residential dataset to a new CSV.
+Place the monthly CSV files in the repository root using these names:
 
+```text
+CRMLSListingYYYYMM.csv
+CRMLSSoldYYYYMM.csv
+```
 
-### Outputs
-- `combined_sold_202401_202604_residential.csv` — combined, Residential-filtered Sold dataset
-- `combined_listing_202401_202604_residential.csv` — combined, Residential-filtered Listing dataset
+When both versions exist for a Sold month, Week 1 uses the `_filled` version
+instead of the raw version. It selects only one file per month, preventing
+duplicate transactions.
 
-### Notes
-- Row counts are confirmed at each stage — **before/after concatenation** and **before/after the Residential filter** — per the Week 1 deliverable requirements.
-- Monthly counts may differ slightly from a teammate's depending on when the data was pulled from the pipeline.
-- The MLS datasets are confidential and for program use only, and are not committed to this repository.
+Do not commit monthly data, combined data, generated outputs, backups, or the
+internship handbook. The project `.gitignore` blocks these files.
 
----
+## Run the pipeline
 
-## Skills Demonstrated (Week 1)
-- Multi-file dataset management
-- Data aggregation with Pandas (`pd.concat`)
-- Property-type filtering
-- Preparing time-series datasets for downstream analysis
+Run the scripts from the repository root in this order:
 
+```bash
+python3 week1_aggregation.py
+python3 dataset_validation.py
+python3 week2_3_mortgage_rates.py
+python3 data_cleaning.py
+python3 week6_feature_engineering.py
+```
+
+Each stage validates its required inputs before processing. The large datasets
+are not committed; rerunning the scripts recreates them locally.
+
+## Workflow details
+
+### Week 1 — Monthly aggregation
+
+- Verifies continuous month coverage from January 2024 through the latest file
+- Uses one Sold and one Listing source per month
+- Adds source-month and source-file traceability columns
+- Reconciles row counts before and after concatenation
+- Filters both datasets to `PropertyType == "Residential"`
+
+### Weeks 2–3 — Validation and mortgage enrichment
+
+- Produces missing-value reports and flags columns above 90% missing
+- Creates percentile, histogram, boxplot, and IQR outlier summaries
+- Downloads the FRED `MORTGAGE30US` weekly series
+- Calculates monthly average mortgage rates
+- Merges rates using `CloseDate` for Sold and `ListingContractDate` for Listings
+- Fails validation if an MLS month has no matching mortgage rate
+
+### Weeks 4–5 — Cleaning
+
+- Converts required date and numeric columns
+- Flags invalid prices, living areas, days on market, bedroom, and bathroom data
+- Checks transaction date ordering
+- Flags missing, zero, positive-longitude, implausible, and out-of-state coordinates
+- Saves cleaned datasets plus before/after and quality summaries
+
+### Week 6 — Feature engineering
+
+- Creates price ratio and close-to-original-list ratio
+- Calculates price per square foot
+- Derives Year, Month, and YrMo from CloseDate
+- Calculates listing-to-contract and contract-to-close intervals
+- Produces metric-quality and county-level summary files
+
+School-district spatial mapping is intentionally outside this Data Analyst
+repository because it belongs to the separate AI Agent project.
+
+## Data safety
+
+Before publishing, verify that Git is not tracking data files:
+
+```bash
+git ls-files '*.csv' '*.CSV' '*.geojson'
+```
+
+The command should return no output.
