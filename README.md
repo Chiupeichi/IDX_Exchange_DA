@@ -27,28 +27,7 @@ flowchart LR
     F --> G["Weeks 8–10<br/>Build Tableau dashboards"]
     G --> H["Weeks 11–12<br/>Present insights and final report"]
 ```
-### Why “California Residential”?
-
-“California” describes the **geographic market** represented by the CRMLS
-source. “Residential” is a **property-type filter** applied in Week 1. The raw
-files can include other property types, so this project keeps rows where
-`PropertyType == "Residential"` to create a more consistent housing-market
-analysis. Later validation also flags records with impossible or
-out-of-California coordinates.
-
-## What the two datasets represent
-
-| Dataset | Meaning | Main analytical use |
-| --- | --- | --- |
-| **Listing** | Properties offered on the market, including active, pending, withdrawn, expired, and other listing outcomes | Measure inventory, asking prices, days on market, and listing status |
-| **Sold** | Properties with a completed sale and recorded closing information | Measure transaction prices, sale timing, price ratios, and price per square foot |
-
-Important field groups include property and listing identifiers, original/list
-and close prices, listing/contract/close dates, property characteristics such as
-living area and bedrooms, and geographic fields such as county, city, latitude,
-and longitude. Row-level values are never published in this repository.
-
-## Business questions
+## What we are going to figure out?
 
 The project is designed to help answer:
 
