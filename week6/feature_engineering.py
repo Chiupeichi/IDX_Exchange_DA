@@ -4,12 +4,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = SCRIPT_DIR.parent
 INPUT_PATH = PROJECT_DIR / "outputs" / "week4_5" / "sold_clean.csv"
 OUTPUT_DIR = PROJECT_DIR / "outputs" / "week6"
+README_ASSET_DIR = SCRIPT_DIR / "assets"
 CHUNK_SIZE = 25_000
 
 
@@ -126,8 +129,31 @@ def create_county_summary(sold: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def save_metric_quality_chart(summary: pd.DataFrame) -> None:
+    """Save aggregate metric-missing counts for the Week 6 README."""
+    labels = summary["metric"].replace(
+        {"PriceRatio / CloseToOriginalListRatio": "Price ratios"}
+    )
+    fig, axis = plt.subplots(figsize=(8.5, 4.5))
+    bars = axis.barh(labels, summary["rows_missing"], color="#2f6f9f")
+    axis.invert_yaxis()
+    axis.set_title("Week 6 Metric Quality — Missing Rows")
+    axis.set_xlabel("Rows missing")
+    axis.bar_label(bars, fmt="{:,.0f}", padding=4)
+    axis.set_xlim(0, summary["rows_missing"].max() * 1.15)
+    axis.grid(axis="x", alpha=0.2)
+    fig.tight_layout()
+    fig.savefig(
+        README_ASSET_DIR / "metric-missing-rows.png",
+        dpi=150,
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    README_ASSET_DIR.mkdir(parents=True, exist_ok=True)
     engineered_output_path = OUTPUT_DIR / "sold_week6_engineered.csv"
     metric_counts = {
         "PriceRatio / CloseToOriginalListRatio": [0, 0],
@@ -241,6 +267,7 @@ def main() -> None:
     metric_quality_summary.to_csv(
         OUTPUT_DIR / "metric_quality_summary.csv", index=False
     )
+    save_metric_quality_chart(metric_quality_summary)
 
     print("Week 6 feature engineering complete.")
     print(f"Rows processed: {rows_processed:,}")

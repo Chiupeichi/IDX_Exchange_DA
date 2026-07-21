@@ -15,7 +15,7 @@ from pathlib import Path
 import pandas as pd
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = PROJECT_DIR / "outputs" / "week1"
 START_MONTH = pd.Period("2024-01", freq="M")
 

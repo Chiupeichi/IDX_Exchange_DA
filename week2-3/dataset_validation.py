@@ -2,19 +2,22 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib.ticker import FuncFormatter
 
 
 # ==========================================================
 # Project paths
 # ==========================================================
 
-PROJECT_DIR = Path(__file__).resolve().parent
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = SCRIPT_DIR.parent
 
 SOLD_PATH = PROJECT_DIR / "combined_sold_202401_202606_residential.csv"
 LISTING_PATH = PROJECT_DIR / "combined_listing_202401_202606_residential.csv"
 
 OUTPUT_DIR = PROJECT_DIR / "outputs" / "week2"
 PLOT_DIR = OUTPUT_DIR / "distribution_plots"
+README_ASSET_DIR = SCRIPT_DIR / "assets"
 
 NUMERIC_COLUMNS = [
     "ClosePrice",
@@ -27,6 +30,11 @@ NUMERIC_COLUMNS = [
     "DaysOnMarket",
     "YearBuilt",
 ]
+
+PUBLISHED_PLOTS = {
+    ("sold", "ClosePrice"): "sold-close-price-distribution.png",
+    ("sold", "DaysOnMarket"): "sold-days-on-market-distribution.png",
+}
 
 
 # ==========================================================
@@ -127,21 +135,42 @@ def save_distribution_plot(
     if data.empty:
         return
 
+    lower = data.quantile(0.01)
+    upper = data.quantile(0.99)
+    display_data = data.loc[data.between(lower, upper)]
+    if display_data.empty or lower == upper:
+        display_data = data
+
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 
-    axes[0].hist(data, bins=50)
-    axes[0].set_title(f"{dataset_name.title()} {column} Histogram")
+    axes[0].hist(display_data, bins=50, color="#2f6f9f", edgecolor="white")
+    axes[0].set_title("Histogram (1st–99th percentile)")
     axes[0].set_xlabel(column)
     axes[0].set_ylabel("Frequency")
 
-    axes[1].boxplot(data, vert=False)
-    axes[1].set_title(f"{dataset_name.title()} {column} Boxplot")
+    axes[1].boxplot(display_data, vert=False, showfliers=True)
+    axes[1].set_title("Boxplot (1st–99th percentile)")
     axes[1].set_xlabel(column)
+    axes[1].set_yticks([])
+
+    number_formatter = FuncFormatter(lambda value, _: f"{value:,.0f}")
+    axes[0].xaxis.set_major_formatter(number_formatter)
+    axes[1].xaxis.set_major_formatter(number_formatter)
+
+    fig.suptitle(f"{dataset_name.title()} {column} Distribution")
 
     fig.tight_layout()
 
     output_path = PLOT_DIR / f"{dataset_name}_{column}_distribution.png"
     fig.savefig(output_path, dpi=150, bbox_inches="tight")
+
+    published_name = PUBLISHED_PLOTS.get((dataset_name, column))
+    if published_name:
+        fig.savefig(
+            README_ASSET_DIR / published_name,
+            dpi=150,
+            bbox_inches="tight",
+        )
     plt.close(fig)
 
 
@@ -162,6 +191,7 @@ def validate_input_file(path: Path) -> None:
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     PLOT_DIR.mkdir(parents=True, exist_ok=True)
+    README_ASSET_DIR.mkdir(parents=True, exist_ok=True)
 
     validate_input_file(SOLD_PATH)
     validate_input_file(LISTING_PATH)

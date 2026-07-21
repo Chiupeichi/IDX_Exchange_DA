@@ -1,12 +1,16 @@
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib.ticker import FuncFormatter
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_DIR = SCRIPT_DIR.parent
 SOLD_PATH = PROJECT_DIR / "outputs" / "week2_3" / "sold_with_mortgage_rates.csv"
 LISTINGS_PATH = PROJECT_DIR / "outputs" / "week2_3" / "listings_with_mortgage_rates.csv"
 OUTPUT_DIR = PROJECT_DIR / "outputs" / "week4_5"
+README_ASSET_DIR = SCRIPT_DIR / "assets"
 
 SOLD_DATE_COLUMNS = [
     "CloseDate",
@@ -399,6 +403,46 @@ def create_clean_datasets(
     return sold_clean, listings_clean, summary
 
 
+def save_cleaning_summary_chart(summary: pd.DataFrame) -> None:
+    """Visualize aggregate before/after counts without exposing row data."""
+    labels = summary["dataset"].str.title()
+    positions = range(len(summary))
+    width = 0.36
+
+    fig, axis = plt.subplots(figsize=(8, 4.5))
+    before_bars = axis.bar(
+        [position - width / 2 for position in positions],
+        summary["rows_before"],
+        width,
+        label="Before cleaning",
+        color="#7aa6c2",
+    )
+    after_bars = axis.bar(
+        [position + width / 2 for position in positions],
+        summary["rows_after"],
+        width,
+        label="After cleaning",
+        color="#2f6f9f",
+    )
+    axis.set_title("Weeks 4–5 Cleaning Row Counts")
+    axis.set_ylabel("Rows")
+    axis.set_xticks(list(positions), labels)
+    axis.yaxis.set_major_formatter(
+        FuncFormatter(lambda value, _: f"{value:,.0f}")
+    )
+    axis.legend()
+    axis.bar_label(before_bars, fmt="{:,.0f}", padding=3)
+    axis.bar_label(after_bars, fmt="{:,.0f}", padding=3)
+    axis.set_ylim(0, summary["rows_before"].max() * 1.12)
+    fig.tight_layout()
+    fig.savefig(
+        README_ASSET_DIR / "cleaning-row-counts.png",
+        dpi=150,
+        bbox_inches="tight",
+    )
+    plt.close(fig)
+
+
 def validate_clean_datasets(
     sold_clean: pd.DataFrame,
     listings_clean: pd.DataFrame,
@@ -446,6 +490,7 @@ def validate_clean_datasets(
 
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    README_ASSET_DIR.mkdir(parents=True, exist_ok=True)
 
     validate_input_file(SOLD_PATH)
     validate_input_file(LISTINGS_PATH)
@@ -517,6 +562,7 @@ def main() -> None:
     geo_flag_summary.to_csv(
         OUTPUT_DIR / "geographic_data_quality_summary.csv", index=False
     )
+    save_cleaning_summary_chart(cleaning_summary)
 
     print("\nWeek 4-5 data cleaning complete.")
     print(cleaning_summary.to_string(index=False))
