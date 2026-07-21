@@ -216,3 +216,25 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project data policy
+# Raw and generated CSV data must never be committed to this repository.
+*.csv
+*.CSV
+
+# Generated datasets, outputs, and local backups
+/outputs/
+/SOLD:backup/
+/data/
+*.geojson
+
+# Local exploratory notebooks may contain embedded MLS output.
+*.ipynb
+
+# Local documents and operating-system/session files
+/DataAnalystInternship_Handbook.pdf
+.DS_Store
+.Rhistory
+.RData
+.Rapp.history
+Icon*

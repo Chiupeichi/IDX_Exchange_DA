@@ -10,10 +10,10 @@ import pandas as pd
 
 PROJECT_DIR = Path(__file__).resolve().parent
 
-SOLD_PATH = PROJECT_DIR / "combined_sold_202401_202604_residential.csv"
-LISTING_PATH = PROJECT_DIR / "combined_listing_202401_202604_residential.csv"
+SOLD_PATH = PROJECT_DIR / "combined_sold_202401_202606_residential.csv"
+LISTING_PATH = PROJECT_DIR / "combined_listing_202401_202606_residential.csv"
 
-OUTPUT_DIR = PROJECT_DIR / "outputs" / "week2_3"
+OUTPUT_DIR = PROJECT_DIR / "outputs" / "week2"
 PLOT_DIR = OUTPUT_DIR / "distribution_plots"
 
 NUMERIC_COLUMNS = [

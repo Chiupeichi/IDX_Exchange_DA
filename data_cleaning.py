@@ -101,6 +101,16 @@ def validate_required_columns(
         )
 
 
+def validate_residential_only(df: pd.DataFrame, dataset_name: str) -> None:
+    """Stop the pipeline if an upstream step supplied non-Residential rows."""
+    property_types = set(df["PropertyType"].dropna().unique())
+    if property_types != {"Residential"}:
+        raise ValueError(
+            f"{dataset_name} must contain only Residential rows; found: "
+            f"{sorted(property_types)}"
+        )
+
+
 def convert_date_columns(
     df: pd.DataFrame,
     columns: list[str],
@@ -166,12 +176,18 @@ def add_numeric_flags(
     sold = sold.copy()
     listings = listings.copy()
 
+    # Missing core values are retained for traceability, but explicitly flagged
+    # so later metric calculations can exclude values that are not computable.
+    sold["missing_close_price_flag"] = sold["ClosePrice"].isna()
+    sold["missing_living_area_flag"] = sold["LivingArea"].isna()
     sold["invalid_close_price_flag"] = sold["ClosePrice"].le(0)
     sold["invalid_living_area_flag"] = sold["LivingArea"].le(0)
     sold["negative_days_on_market_flag"] = sold["DaysOnMarket"].lt(0)
     sold["negative_bedrooms_flag"] = sold["BedroomsTotal"].lt(0)
     sold["negative_bathrooms_flag"] = sold["BathroomsTotalInteger"].lt(0)
 
+    listings["missing_list_price_flag"] = listings["ListPrice"].isna()
+    listings["missing_living_area_flag"] = listings["LivingArea"].isna()
     listings["invalid_list_price_flag"] = listings["ListPrice"].le(0)
     listings["invalid_living_area_flag"] = listings["LivingArea"].le(0)
     listings["negative_days_on_market_flag"] = listings["DaysOnMarket"].lt(0)
@@ -185,6 +201,8 @@ def add_numeric_flags(
             "sold",
             sold,
             [
+                "missing_close_price_flag",
+                "missing_living_area_flag",
                 "invalid_close_price_flag",
                 "invalid_living_area_flag",
                 "negative_days_on_market_flag",
@@ -196,6 +214,8 @@ def add_numeric_flags(
             "listings",
             listings,
             [
+                "missing_list_price_flag",
+                "missing_living_area_flag",
                 "invalid_list_price_flag",
                 "invalid_living_area_flag",
                 "negative_days_on_market_flag",
@@ -436,6 +456,8 @@ def main() -> None:
 
     validate_required_columns(sold, REQUIRED_SOLD_COLUMNS, "sold")
     validate_required_columns(listings, REQUIRED_LISTING_COLUMNS, "listings")
+    validate_residential_only(sold, "sold")
+    validate_residential_only(listings, "listings")
 
     print("Converting date columns...")
     sold, sold_date_summary = convert_date_columns(
