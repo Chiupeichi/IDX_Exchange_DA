@@ -1,12 +1,81 @@
 # IDX Exchange — Data Analyst Internship
 
-Python workflows for the IDX Exchange MLS Analytics Program. The project
-combines monthly CRMLS files, validates and enriches Residential records,
-cleans invalid observations, and creates market metrics for analysis.
+An end-to-end California residential real-estate analytics project built from
+monthly CRMLS listing and sold records. The workflow turns confidential MLS
+exports into validated, analysis-ready market metrics and aggregate visuals for
+future Tableau reporting.
 
 The public repository contains code, documentation, and aggregate charts only.
 Raw and generated MLS CSV files are confidential working data and are excluded
 from Git.
+
+## Project at a glance
+
+The analysis currently covers **January 2024 through June 2026**. It begins with
+monthly Listing and Sold CSV files, narrows the data to residential properties,
+checks quality, enriches records with mortgage rates, removes invalid values,
+and creates metrics that describe price, market speed, and transaction timing.
+
+Current completed scope: **Weeks 1–6**. Weeks 7–12 below are the planned next
+stages of the internship roadmap.
+
+```mermaid
+flowchart LR
+    A["Monthly Sold and Listing CSVs"] --> B["Week 1<br/>Aggregate months and keep Residential"]
+    B --> C["Weeks 2–3<br/>Validate data, explore distributions, add mortgage rates"]
+    C --> D["Weeks 4–5<br/>Clean dates, numbers, and coordinates"]
+    D --> E["Week 6<br/>Create market metrics"]
+    E -. planned .-> F["Week 7<br/>Handle outliers"]
+    F -. planned .-> G["Weeks 8–10<br/>Build Tableau dashboards"]
+    G -. planned .-> H["Weeks 11–12<br/>Present insights and final report"]
+```
+
+## MLS, CRMLS, and IDX
+
+- **MLS (Multiple Listing Service)** is a shared database used by real-estate
+  professionals to publish and exchange property listing and transaction data.
+- **CRMLS (California Regional Multiple Listing Service)** is the MLS source for
+  this project. Its records primarily cover California markets. See the
+  [CRMLS overview](https://go.crmls.org/about/) and
+  [coverage area](https://go.crmls.org/coverage-area/).
+- **IDX (Internet Data Exchange)** is the framework that allows approved MLS
+  listing information to appear on brokerage and real-estate websites. See the
+  [CRMLS IDX resources](https://go.crmls.org/idx-resources/).
+
+### Why “California Residential”?
+
+“California” describes the **geographic market** represented by the CRMLS
+source. “Residential” is a **property-type filter** applied in Week 1. The raw
+files can include other property types, so this project keeps rows where
+`PropertyType == "Residential"` to create a more consistent housing-market
+analysis. Later validation also flags records with impossible or
+out-of-California coordinates.
+
+## What the two datasets represent
+
+| Dataset | Meaning | Main analytical use |
+| --- | --- | --- |
+| **Listing** | Properties offered on the market, including active, pending, withdrawn, expired, and other listing outcomes | Measure inventory, asking prices, days on market, and listing status |
+| **Sold** | Properties with a completed sale and recorded closing information | Measure transaction prices, sale timing, price ratios, and price per square foot |
+
+Important field groups include property and listing identifiers, original/list
+and close prices, listing/contract/close dates, property characteristics such as
+living area and bedrooms, and geographic fields such as county, city, latitude,
+and longitude. Row-level values are never published in this repository.
+
+## Business questions
+
+The project is designed to help answer:
+
+- How do California residential prices change over time?
+- How do prices differ across counties?
+- How long does a property usually take to find a buyer?
+- After an offer is accepted, how long does closing usually take?
+- Do homes tend to sell above or below their original asking price?
+- What is the typical sale price per square foot?
+- Do housing-market patterns change when mortgage rates rise or fall?
+- Which records contain input errors, impossible values, or extreme outliers?
+- Which cleaned records are reliable enough for Tableau dashboards and reporting?
 
 ## Repository structure
 
