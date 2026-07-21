@@ -18,6 +18,26 @@ import pandas as pd
 PROJECT_DIR = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = PROJECT_DIR / "outputs" / "week1"
 START_MONTH = pd.Period("2024-01", freq="M")
+DUPLICATE_COLUMN_PATTERN = re.compile(r"^(?P<original>.+)\.(?P<suffix>\d+)$")
+NUMERIC_DUPLICATE_COLUMNS = {
+    "DaysOnMarket",
+    "Latitude",
+    "ListPrice",
+    "LivingArea",
+    "Longitude",
+}
+DUPLICATE_AUDIT_COLUMNS = [
+    "dataset",
+    "source_month",
+    "source_file",
+    "original_column",
+    "duplicate_column",
+    "rows_checked",
+    "equivalent_rows",
+    "canonical_only_rows",
+    "duplicate_only_rows_recovered",
+    "conflicting_non_null_rows_kept_canonical",
+]
 
 
 def get_month(path: Path) -> str:
@@ -69,14 +89,128 @@ def select_monthly_files(prefix: str, prefer_filled: bool) -> list[tuple[str, Pa
     return selected
 
 
-def build_dataset(prefix: str, label: str, prefer_filled: bool) -> tuple[pd.DataFrame, list[dict[str, object]], pd.DataFrame]:
+def equivalent_values(
+    left: pd.Series,
+    right: pd.Series,
+    allow_numeric_formatting: bool,
+) -> pd.Series:
+    """Compare duplicate columns while tolerating formatting-only differences."""
+    both_missing = left.isna() & right.isna()
+    text_equal = (
+        left.astype("string")
+        .str.strip()
+        .eq(right.astype("string").str.strip())
+        .fillna(False)
+    )
+
+    if not allow_numeric_formatting:
+        return both_missing | text_equal
+
+    left_numeric = pd.to_numeric(left, errors="coerce")
+    right_numeric = pd.to_numeric(right, errors="coerce")
+    numeric_equal = left_numeric.notna() & right_numeric.notna() & left_numeric.eq(
+        right_numeric
+    )
+    return both_missing | text_equal | numeric_equal
+
+
+def remove_duplicate_columns(
+    frame: pd.DataFrame,
+    dataset: str,
+    source_month: str,
+    source_file: str,
+) -> tuple[pd.DataFrame, list[dict[str, object]]]:
+    """Audit pandas ``.1`` columns, preserve information, and remove copies.
+
+    Duplicate-only values are copied into the canonical column before removal.
+    If both copies contain different non-null values, the canonical (first)
+    column is retained and the conflict count is recorded for review.
+    """
+    duplicate_columns: list[tuple[str, str]] = []
+    for column in frame.columns:
+        match = DUPLICATE_COLUMN_PATTERN.fullmatch(column)
+        if match and match.group("original") in frame.columns:
+            duplicate_columns.append((match.group("original"), column))
+
+    audit_rows: list[dict[str, object]] = []
+    for original, duplicate in duplicate_columns:
+        original_values = frame[original]
+        duplicate_values = frame[duplicate]
+        equivalent = equivalent_values(
+            original_values,
+            duplicate_values,
+            allow_numeric_formatting=original in NUMERIC_DUPLICATE_COLUMNS,
+        )
+        canonical_only = original_values.notna() & duplicate_values.isna()
+        duplicate_only = original_values.isna() & duplicate_values.notna()
+        conflicts = (
+            original_values.notna()
+            & duplicate_values.notna()
+            & ~equivalent
+        )
+
+        if duplicate_only.any():
+            frame.loc[duplicate_only, original] = duplicate_values.loc[duplicate_only]
+
+        audit_rows.append(
+            {
+                "dataset": dataset,
+                "source_month": source_month,
+                "source_file": source_file,
+                "original_column": original,
+                "duplicate_column": duplicate,
+                "rows_checked": len(frame),
+                "equivalent_rows": int(equivalent.sum()),
+                "canonical_only_rows": int(canonical_only.sum()),
+                "duplicate_only_rows_recovered": int(duplicate_only.sum()),
+                "conflicting_non_null_rows_kept_canonical": int(conflicts.sum()),
+            }
+        )
+
+    if duplicate_columns:
+        frame = frame.drop(
+            columns=[duplicate for _, duplicate in duplicate_columns]
+        )
+
+    remaining_duplicates = []
+    for column in frame.columns:
+        match = DUPLICATE_COLUMN_PATTERN.fullmatch(column)
+        if match and match.group("original") in frame.columns:
+            remaining_duplicates.append(column)
+    if remaining_duplicates:
+        raise ValueError(
+            f"{dataset} {source_file}: duplicate columns remain after cleanup: "
+            f"{', '.join(remaining_duplicates)}"
+        )
+
+    return frame, audit_rows
+
+
+def build_dataset(
+    prefix: str,
+    label: str,
+    prefer_filled: bool,
+) -> tuple[
+    pd.DataFrame,
+    list[dict[str, object]],
+    pd.DataFrame,
+    list[dict[str, object]],
+]:
     """Load, document, combine, and Residential-filter one MLS dataset."""
     selected_files = select_monthly_files(prefix, prefer_filled=prefer_filled)
     frames: list[pd.DataFrame] = []
     manifest_rows: list[dict[str, object]] = []
+    duplicate_audit_rows: list[dict[str, object]] = []
 
     for month, path in selected_files:
         monthly = pd.read_csv(path, low_memory=False)
+        monthly, monthly_duplicate_audit = remove_duplicate_columns(
+            monthly,
+            dataset=label,
+            source_month=month,
+            source_file=path.name,
+        )
+        duplicate_audit_rows.extend(monthly_duplicate_audit)
         monthly["SourceMonth"] = month
         monthly["SourceFile"] = path.name
         frames.append(monthly)
@@ -129,18 +263,23 @@ def build_dataset(prefix: str, label: str, prefer_filled: bool) -> tuple[pd.Data
         "rows_after_residential_filter": len(residential),
     }
 
-    return residential, manifest_rows + [summary], property_type_summary
+    return (
+        residential,
+        manifest_rows + [summary],
+        property_type_summary,
+        duplicate_audit_rows,
+    )
 
 
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    sold, sold_rows, sold_types = build_dataset(
+    sold, sold_rows, sold_types, sold_duplicate_audit = build_dataset(
         prefix="CRMLSSold",
         label="sold",
         prefer_filled=True,
     )
-    listings, listing_rows, listing_types = build_dataset(
+    listings, listing_rows, listing_types, listing_duplicate_audit = build_dataset(
         prefix="CRMLSListing",
         label="listing",
         prefer_filled=False,
@@ -154,6 +293,10 @@ def main() -> None:
     )
     property_type_summary = pd.concat(
         [sold_types, listing_types], ignore_index=True
+    )
+    duplicate_column_audit = pd.DataFrame(
+        sold_duplicate_audit + listing_duplicate_audit,
+        columns=DUPLICATE_AUDIT_COLUMNS,
     )
 
     start_month = aggregation_summary["first_month"].min()
@@ -170,12 +313,33 @@ def main() -> None:
         OUTPUT_DIR / "property_type_summary_before_filter.csv",
         index=False,
     )
+    duplicate_column_audit.to_csv(
+        OUTPUT_DIR / "duplicate_column_audit.csv",
+        index=False,
+    )
 
     print("Week 1 aggregation complete.")
     print(aggregation_summary.to_string(index=False))
     print(f"Saved: {sold_path.name}")
     print(f"Saved: {listing_path.name}")
     print(f"Saved reports to: {OUTPUT_DIR}")
+    if not duplicate_column_audit.empty:
+        duplicate_pairs = duplicate_column_audit[
+            ["original_column", "duplicate_column"]
+        ].drop_duplicates()
+        conflicts = int(
+            duplicate_column_audit[
+                "conflicting_non_null_rows_kept_canonical"
+            ].sum()
+        )
+        recovered = int(
+            duplicate_column_audit["duplicate_only_rows_recovered"].sum()
+        )
+        print(
+            f"Removed {len(duplicate_pairs)} duplicate column pairs after audit; "
+            f"kept {conflicts} canonical conflicting values and recovered "
+            f"{recovered} duplicate-only values."
+        )
 
 
 if __name__ == "__main__":
