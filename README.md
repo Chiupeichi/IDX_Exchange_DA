@@ -27,7 +27,6 @@ flowchart LR
     F --> G["Weeks 8–10<br/>Build Tableau dashboards"]
     G --> H["Weeks 11–12<br/>Present insights and final report"]
 ```
-
 ### Why “California Residential”?
 
 “California” describes the **geographic market** represented by the CRMLS
