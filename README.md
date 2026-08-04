@@ -49,6 +49,7 @@ The project is designed to help answer:
 | Weeks 2–3 | [`week2-3/`](week2-3/) | EDA, validation, distributions, and FRED mortgage rates |
 | Weeks 4–5 | [`week4-5/`](week4-5/) | Data cleaning and quality flags |
 | Week 6 | [`week6/`](week6/) | Market metrics and segmented summaries |
+| Week 7 | [`week7/`](week7/) | IQR outlier flags and filtered analysis data |
 
 Each folder contains its own Python script(s), README, key results, and selected
 aggregate charts where a visual is useful.
@@ -86,6 +87,7 @@ python3 week2-3/dataset_validation.py
 python3 week2-3/mortgage_rate_enrichment.py
 python3 week4-5/data_cleaning.py
 python3 week6/feature_engineering.py
+python3 week7/outlier_detection.py
 ```
 
 The current local analysis covers January 2024 through June 2026. Week 1
