@@ -9,7 +9,10 @@ end of the combined Weeks 8–10 phase.
 
 ## Script
 
-[`tableau_data_prep.py`](tableau_data_prep.py)
+[`tableau_data_prep.py`](tableau_data_prep.py) prepares and validates the two
+Tableau datasets. [`build_market_analysis_workbook.py`](build_market_analysis_workbook.py)
+then converts the market events into a Tableau Hyper extract and creates the
+packaged Market Analysis workbook.
 
 The script creates:
 
@@ -65,21 +68,23 @@ collapses.
 
 - `tableau_market_events.csv` — Market Analysis Tableau source;
 - `tableau_competitive_sales.csv` — Competitive Analysis Tableau source;
+- `market_analysis.hyper` — local Tableau extract with 914,119 market events;
+- `market_analysis.twbx` — ready-to-open Market Analysis workbook;
 - `market_monthly_summary.csv` — validation of all five market measures;
 - `top_100_listing_agents.csv` and `top_100_listing_offices.csv` — local
   ranking checks;
 - `tableau_data_quality_summary.csv` — row, duplicate, metric, and coverage
   audit.
 
-## Tableau Public setup
+## Market Analysis workbook
 
-1. Open Tableau Public and connect to
-   `outputs/week8/tableau_market_events.csv` as a Text File.
-2. Assign geographic roles to `City`, `CountyOrParish`, and `PostalCode`.
-3. Add `City`, `CountyOrParish`, `PostalCode`, and `PropertySubType` as filters,
-   then apply them to all worksheets using this data source.
-4. Build the following worksheets with continuous MONTH(`EventDate`) on
-   Columns:
+Run the workbook builder, then open
+`outputs/week8/market_analysis.twbx` in Tableau Public. The packaged workbook
+uses a local Hyper extract, so it meets Tableau Public's extract requirement
+without reconnecting to the source CSV.
+
+The workbook contains the following worksheets with continuous
+MONTH(`EventDate`) on Columns:
 
 | Worksheet | Rows / Marks | Required filter |
 | --- | --- | --- |
@@ -89,20 +94,27 @@ collapses.
 | New Listings | SUM(`NewListings`) | None |
 | Closed Sales | SUM(`ClosedSales`) | None |
 
-5. Place the five worksheets in one Market Overview dashboard and show the four
-   shared filters.
-6. Save the workbook as `market_analysis.twbx`.
+All five worksheets appear on the `Market Overview` dashboard. `City`,
+`CountyOrParish`, `PostalCode`, and `PropertySubType` are displayed as shared
+dropdown filters, and the three geographic fields have their matching Tableau
+geographic roles.
+
+The generated workbook was validated in Tableau Public 2026.1: the workbook
+DOM, packaged Hyper connection, nine-query dashboard batches, and all five
+worksheet computations completed successfully.
 
 See [`DATA_DICTIONARY.md`](DATA_DICTIONARY.md) for field roles and formatting.
 
 ## Data safety
 
-The Tableau CSV files contain confidential row-level MLS information and remain
-local under `outputs/week8/`, which is excluded from Git. Only code,
-documentation, and aggregate validation charts are published.
+The Tableau CSV, Hyper, and TWBX files contain confidential row-level MLS
+information and remain local under `outputs/week8/`, which is excluded from
+Git. Only code, documentation, and aggregate validation charts are published.
 
 ## Run
 
 ```bash
+python3 -m pip install -r requirements.txt
 python3 week8/tableau_data_prep.py
+python3 week8/build_market_analysis_workbook.py
 ```
