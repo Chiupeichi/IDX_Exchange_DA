@@ -5,6 +5,10 @@
 Use `outputs/week8/tableau_market_events.csv` for the Market Analysis
 workbook.
 
+The source CSV uses `EventId` and `ListingKey` for local duplicate validation.
+Both direct identifiers are omitted from the publishable Hyper extract embedded
+in `week8/market_analysis.twbx` because neither is required by a visualization.
+
 | Field | Tableau role | Description |
 | --- | --- | --- |
 | EventId | Dimension | Stable event identity used to prevent exact duplicate counts |
