@@ -30,8 +30,10 @@ in `week8/market_analysis.twbx` because neither is required by a visualization.
 
 ## Competitive sales data source
 
-Use `outputs/week8/tableau_competitive_sales.csv` for the Competitive Analysis
-workbook in Weeks 9–10.
+Use `outputs/week8/tableau_competitive_sales.csv` to rebuild the Competitive
+Analysis workbook. The publishable workbook is
+`week8/competitive_analysis.twbx`; its embedded extract excludes `EventId` and
+`ListingKey` because neither identifier is needed for a visualization.
 
 | Field | Tableau role | Description |
 | --- | --- | --- |
@@ -43,6 +45,10 @@ workbook in Weeks 9–10.
 | PropertySubType | Dimension | Required property subtype filter |
 | ClosePrice | Measure | Sold price for median-price maps |
 | YrMo | Date dimension | Monthly filter derived from CloseDate |
+
+The workbook assigns ZIP Code, City, County, and State geographic roles. Its
+five dashboards share the `YrMo`, `City`, `CountyOrParish`, `PostalCode`, and
+`PropertySubType` filters.
 
 ## Recommended formatting
 

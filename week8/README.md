@@ -12,7 +12,8 @@ end of the combined Weeks 8–10 phase.
 [`tableau_data_prep.py`](tableau_data_prep.py) prepares and validates the two
 Tableau datasets. [`build_market_analysis_workbook.py`](build_market_analysis_workbook.py)
 then converts the market events into a Tableau Hyper extract and creates the
-packaged Market Analysis workbook.
+packaged Market Analysis workbook. [`build_competitive_analysis_workbook.py`](build_competitive_analysis_workbook.py)
+converts the competitive sales dataset into the second packaged workbook.
 
 The script creates:
 
@@ -73,6 +74,10 @@ collapses.
   workbook;
 - `week8/market_analysis.twbx` — publishable, Git-tracked deliverable with
   direct listing identifiers removed;
+- `outputs/week8/competitive_analysis.twbx` — local build of the Competitive
+  Analysis workbook;
+- `week8/competitive_analysis.twbx` — publishable, Git-tracked competitive
+  deliverable with 366,856 closed-sale rows and direct identifiers removed;
 - `market_monthly_summary.csv` — validation of all five market measures;
 - `top_100_listing_agents.csv` and `top_100_listing_offices.csv` — local
   ranking checks;
@@ -115,6 +120,34 @@ computations completed successfully.
 
 See [`DATA_DICTIONARY.md`](DATA_DICTIONARY.md) for field roles and formatting.
 
+## Competitive Analysis workbook
+
+Run `build_competitive_analysis_workbook.py --publish-copy`, then open
+`week8/competitive_analysis.twbx` in Tableau Public. The packaged Hyper extract
+covers January 2024 through June 2026 and contains 366,856 cleaned closed-sale
+rows.
+
+The workbook contains six worksheets:
+
+| Worksheet | Calculation |
+| --- | --- |
+| Top 100 Listing Agents - Sales Volume | Dynamic Top 100 by SUM(`SalesVolume`) |
+| Top 100 Listing Agents - Units Sold | Dynamic Top 100 by SUM(`UnitsSold`) |
+| Top 100 Listing Offices - Sales Volume | Dynamic Top 100 by SUM(`SalesVolume`) |
+| Top 100 Listing Offices - Units Sold | Dynamic Top 100 by SUM(`UnitsSold`) |
+| ZIP Median Close Price Map | MEDIAN(`ClosePrice`) by ZIP code |
+| ZIP Homes Sold Map | SUM(`UnitsSold`) by ZIP code |
+
+Those sheets are organized into four required dashboards—`Top 100 Listing
+Agents`, `Top 100 Listing Offices`, `ZIP Median Close Price`, and `ZIP Homes
+Sold`—plus the custom `Competitive Overview`. Every dashboard provides shared
+dropdown controls for `YrMo`, `City`, `CountyOrParish`, `PostalCode`, and
+`PropertySubType`.
+
+The competitive workbook was validated in Tableau Public 2026.1: the workbook
+DOM loaded successfully, the packaged Hyper connection opened, all dashboard
+query batches completed, and the ZIP maps connected to Tableau geocoding.
+
 ## Data safety
 
 The source CSV and local working extracts remain under `outputs/week8/`, which
@@ -123,10 +156,15 @@ publishable Hyper extract that omits the direct identifiers `EventId` and
 `ListingKey`; it retains the pattern-level month, geography, property type, and
 market measures required for the assignment.
 
+The tracked `week8/competitive_analysis.twbx` follows the same policy: it
+contains aggregate-ready competitive fields but excludes `EventId` and
+`ListingKey`.
+
 ## Run
 
 ```bash
 python3 -m pip install -r requirements.txt
 python3 week8/tableau_data_prep.py
 python3 week8/build_market_analysis_workbook.py --publish-copy
+python3 week8/build_competitive_analysis_workbook.py --publish-copy
 ```
