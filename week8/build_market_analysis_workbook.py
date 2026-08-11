@@ -1,13 +1,14 @@
-"""Build the local Week 8 Tableau Market Analysis workbook.
+"""Build the Week 8 Tableau Market Analysis packaged workbook.
 
-The generated TWBX embeds the confidential row-level market event CSV, so it
-is written below outputs/week8 and remains excluded from Git.
+The generated Hyper extract excludes direct listing identifiers while keeping
+the monthly, geographic, property, and market fields required by the rubric.
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
+import shutil
 import uuid
 import zipfile
 from datetime import date
@@ -18,6 +19,7 @@ from xml.etree import ElementTree
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_CSV = PROJECT_DIR / "outputs" / "week8" / "tableau_market_events.csv"
 DEFAULT_OUTPUT = PROJECT_DIR / "outputs" / "week8" / "market_analysis.twbx"
+DEFAULT_PUBLISH_COPY = PROJECT_DIR / "week8" / "market_analysis.twbx"
 
 DATASOURCE = "federated.week8marketanalysis"
 CONNECTION = "hyper.week8marketevents"
@@ -25,7 +27,7 @@ HYPER_TABLE = "market_analysis.hyper"
 HYPER_DIRECTORY = "Data/market_analysis"
 OBJECT_ID = "tableau_market_events_csv"
 
-COLUMNS = [
+SOURCE_COLUMNS = [
     ("EventId", "string"),
     ("EventType", "string"),
     ("EventDate", "date"),
@@ -56,7 +58,23 @@ COLUMNS = [
     ("SourceDataset", "string"),
 ]
 
+# Direct listing identifiers are not needed by any visualization and are
+# intentionally omitted from the publishable Hyper extract.
+DIRECT_IDENTIFIER_FIELDS = {"EventId", "ListingKey"}
+COLUMNS = [
+    column for column in SOURCE_COLUMNS
+    if column[0] not in DIRECT_IDENTIFIER_FIELDS
+]
+
 FILTER_FIELDS = ["City", "CountyOrParish", "PostalCode", "PropertySubType"]
+
+REQUIRED_DASHBOARDS = [
+    ("Close Price Dashboard", "Monthly Median Close Price"),
+    ("Days on Market Dashboard", "Average Days on Market"),
+    ("List-to-Sale Ratio Dashboard", "Average Close-to-Original-List Ratio"),
+    ("New Listings Dashboard", "New Listings"),
+    ("Closed Sales Dashboard", "Closed Sales"),
+]
 
 SHEETS = [
     {
@@ -306,7 +324,80 @@ def worksheet_xml(sheet: dict[str, object]) -> str:
     </worksheet>"""
 
 
-def dashboard_xml() -> str:
+def dashboard_dependencies_xml() -> str:
+    columns = "\n".join(dependency_column(name) for name in FILTER_FIELDS)
+    instances = "\n".join(
+        f"        <column-instance column='[{name}]' derivation='None' "
+        f"name='[none:{name}:nk]' pivot='key' type='nominal' />"
+        for name in FILTER_FIELDS
+    )
+    return f"{columns}\n{instances}"
+
+
+def filter_zone_xml(
+    sheet_name: str,
+    field: str,
+    zone_id: int,
+    x: int,
+    y: int,
+    width: int,
+    height: int,
+) -> str:
+    return (
+        f"          <zone h='{height}' id='{zone_id}' mode='dropdown' "
+        f"name='{xml_escape(sheet_name)}' "
+        f"param='[{DATASOURCE}].[none:{field}:nk]' type-v2='filter' "
+        f"w='{width}' x='{x}' y='{y}'>"
+        "<zone-style><format attr='border-color' value='#d9d9d9' />"
+        "<format attr='border-style' value='solid' />"
+        "<format attr='background-color' value='#ffffff' />"
+        "</zone-style></zone>"
+    )
+
+
+def required_dashboard_xml(dashboard_name: str, sheet_name: str) -> str:
+    zones = [
+        "        <zone h='100000' id='100' type-v2='layout-basic' w='100000' x='0' y='0'>",
+        "          <zone h='8000' id='101' type-v2='title' w='100000' x='0' y='0' />",
+        f"          <zone h='90000' id='1' name='{xml_escape(sheet_name)}' "
+        "w='74500' x='0' y='8500'><zone-style>"
+        "<format attr='border-color' value='#d9d9d9' />"
+        "<format attr='border-style' value='solid' />"
+        "<format attr='border-width' value='1' />"
+        "<format attr='margin' value='10' />"
+        "</zone-style></zone>",
+    ]
+    for offset, field in enumerate(FILTER_FIELDS):
+        zones.append(
+            filter_zone_xml(
+                sheet_name,
+                field,
+                20 + offset,
+                76000,
+                12000 + offset * 19000,
+                22500,
+                11000,
+            )
+        )
+    zones.append("        </zone>")
+    return f"""    <dashboard enable-sort-zone-taborder='true' name='{xml_escape(dashboard_name)}'>
+      <layout-options>
+        <title><formatted-text><run fontname='Tableau Semibold' fontsize='18'>{xml_escape(sheet_name)}</run></formatted-text></title>
+      </layout-options>
+      <style />
+      <size maxheight='900' maxwidth='1400' minheight='900' minwidth='1400' sizing-mode='fixed' />
+      <datasources><datasource caption='Week 8 Market Events' name='{DATASOURCE}' /></datasources>
+      <datasource-dependencies datasource='{DATASOURCE}'>
+{dashboard_dependencies_xml()}
+      </datasource-dependencies>
+      <zones>
+{chr(10).join(zones)}
+      </zones>
+      <simple-id uuid='{new_uuid()}' />
+    </dashboard>"""
+
+
+def market_overview_dashboard_xml() -> str:
     sheet_zones = [
         (SHEETS[0]["name"], 1, 0, 8000, 50000, 42000),
         (SHEETS[1]["name"], 2, 50000, 8000, 50000, 42000),
@@ -330,12 +421,15 @@ def dashboard_xml() -> str:
         )
     for offset, field in enumerate(FILTER_FIELDS):
         zones.append(
-            f"          <zone h='6000' id='{20 + offset}' mode='dropdown' "
-            f"name='{xml_escape(str(SHEETS[0]['name']))}' param='[{DATASOURCE}].[none:{field}:nk]' "
-            f"type-v2='filter' w='24000' x='{1000 + offset * 24750}' y='93000'>"
-            "<zone-style><format attr='border-color' value='#d9d9d9' />"
-            "<format attr='border-style' value='solid' />"
-            "<format attr='background-color' value='#ffffff' /></zone-style></zone>"
+            filter_zone_xml(
+                str(SHEETS[0]["name"]),
+                field,
+                20 + offset,
+                1000 + offset * 24750,
+                93000,
+                24000,
+                6000,
+            )
         )
     zones.append("        </zone>")
     return f"""    <dashboard enable-sort-zone-taborder='true' name='Market Overview'>
@@ -346,8 +440,7 @@ def dashboard_xml() -> str:
       <size maxheight='900' maxwidth='1400' minheight='900' minwidth='1400' sizing-mode='fixed' />
       <datasources><datasource caption='Week 8 Market Events' name='{DATASOURCE}' /></datasources>
       <datasource-dependencies datasource='{DATASOURCE}'>
-{chr(10).join(dependency_column(name) for name in FILTER_FIELDS)}
-{chr(10).join(f"        <column-instance column='[{name}]' derivation='None' name='[none:{name}:nk]' pivot='key' type='nominal' />" for name in FILTER_FIELDS)}
+{dashboard_dependencies_xml()}
       </datasource-dependencies>
       <zones>
 {chr(10).join(zones)}
@@ -357,8 +450,7 @@ def dashboard_xml() -> str:
 
 
 def windows_xml() -> str:
-    windows = [
-    ]
+    windows = []
     for sheet in SHEETS:
         name = xml_escape(str(sheet["name"]))
         windows.extend(
@@ -369,6 +461,18 @@ def windows_xml() -> str:
                 "        <edge name='top'><strip size='2147483647'><card type='columns' /></strip><strip size='2147483647'><card type='rows' /></strip></edge>",
                 "      </cards>",
                 "      <viewpoint><zoom type='entire-view' /></viewpoint>",
+                f"      <simple-id uuid='{new_uuid()}' />",
+                "    </window>",
+            ]
+        )
+    for dashboard_name, sheet_name in REQUIRED_DASHBOARDS:
+        windows.extend(
+            [
+                f"    <window class='dashboard' name='{xml_escape(dashboard_name)}'>",
+                "      <viewpoints>",
+                f"        <viewpoint name='{xml_escape(sheet_name)}'><zoom type='entire-view' /></viewpoint>",
+                "      </viewpoints>",
+                "      <active id='-1' />",
                 f"      <simple-id uuid='{new_uuid()}' />",
                 "    </window>",
             ]
@@ -392,6 +496,10 @@ def windows_xml() -> str:
 
 def workbook_xml() -> str:
     worksheets = "\n".join(worksheet_xml(sheet) for sheet in SHEETS)
+    required_dashboards = "\n".join(
+        required_dashboard_xml(dashboard_name, sheet_name)
+        for dashboard_name, sheet_name in REQUIRED_DASHBOARDS
+    )
     return f"""<?xml version='1.0' encoding='utf-8' ?>
 <workbook original-version='18.1' source-build='2026.1.1 (20261.26.0410.0924)' source-platform='mac' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
   <document-format-change-manifest>
@@ -411,7 +519,8 @@ def workbook_xml() -> str:
 {worksheets}
   </worksheets>
   <dashboards>
-{dashboard_xml()}
+{required_dashboards}
+{market_overview_dashboard_xml()}
   </dashboards>
   <windows source-height='30'>
 {windows_xml()}
@@ -425,7 +534,7 @@ def validate_csv(csv_path: Path) -> None:
         raise FileNotFoundError(f"Tableau source does not exist: {csv_path}")
     with csv_path.open(newline="", encoding="utf-8") as source:
         header = next(csv.reader(source))
-    expected = [name for name, _ in COLUMNS]
+    expected = [name for name, _ in SOURCE_COLUMNS]
     if header != expected:
         raise ValueError(
             "The Tableau CSV header does not match the workbook schema.\n"
@@ -501,17 +610,22 @@ def create_hyper_extract(csv_path: Path, hyper_path: Path) -> int:
             with Inserter(connection, table_definition) as inserter:
                 with csv_path.open(newline="", encoding="utf-8") as source:
                     reader = csv.reader(source)
-                    next(reader)
+                    header = next(reader)
+                    source_indexes = {
+                        name: header.index(name) for name, _ in COLUMNS
+                    }
                     for csv_row in reader:
-                        if len(csv_row) != len(COLUMNS):
+                        if len(csv_row) != len(SOURCE_COLUMNS):
                             raise ValueError(
                                 f"Row {row_count + 2:,} has {len(csv_row)} columns; "
-                                f"expected {len(COLUMNS)}."
+                                f"expected {len(SOURCE_COLUMNS)}."
                             )
                         inserter.add_row(
                             [
-                                convert_csv_value(value, datatype)
-                                for value, (_, datatype) in zip(csv_row, COLUMNS)
+                                convert_csv_value(
+                                    csv_row[source_indexes[name]], datatype
+                                )
+                                for name, datatype in COLUMNS
                             ]
                         )
                         row_count += 1
@@ -547,16 +661,31 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--csv", type=Path, default=DEFAULT_CSV)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument(
+        "--publish-copy",
+        type=Path,
+        nargs="?",
+        const=DEFAULT_PUBLISH_COPY,
+        help=(
+            "also copy the packaged workbook to a tracked deliverable path; "
+            "defaults to week8/market_analysis.twbx"
+        ),
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
     twb_path, twbx_path = build(args.csv.resolve(), args.output.resolve())
+    if args.publish_copy:
+        publish_path = args.publish_copy.resolve()
+        publish_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(twbx_path, publish_path)
+        print(f"Created publish copy: {publish_path}")
     print(f"Created: {twb_path}")
     print(f"Created: {twbx_path}")
     print("Worksheets: 5")
-    print("Dashboard: Market Overview")
+    print("Dashboards: 5 required + Market Overview custom dashboard")
     print("Shared filters: City, CountyOrParish, PostalCode, PropertySubType")
 
 

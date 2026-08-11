@@ -64,12 +64,15 @@ for May 2026. These months are retained without imputation; Tableau viewers
 should treat them as potentially incomplete source periods rather than market
 collapses.
 
-## Local outputs
+## Generated outputs
 
 - `tableau_market_events.csv` — Market Analysis Tableau source;
 - `tableau_competitive_sales.csv` — Competitive Analysis Tableau source;
 - `market_analysis.hyper` — local Tableau extract with 914,119 market events;
-- `market_analysis.twbx` — ready-to-open Market Analysis workbook;
+- `outputs/week8/market_analysis.twbx` — local build of the Market Analysis
+  workbook;
+- `week8/market_analysis.twbx` — publishable, Git-tracked deliverable with
+  direct listing identifiers removed;
 - `market_monthly_summary.csv` — validation of all five market measures;
 - `top_100_listing_agents.csv` and `top_100_listing_offices.csv` — local
   ranking checks;
@@ -94,27 +97,36 @@ MONTH(`EventDate`) on Columns:
 | New Listings | SUM(`NewListings`) | None |
 | Closed Sales | SUM(`ClosedSales`) | None |
 
-All five worksheets appear on the `Market Overview` dashboard. `City`,
-`CountyOrParish`, `PostalCode`, and `PropertySubType` are displayed as shared
-dropdown filters, and the three geographic fields have their matching Tableau
-geographic roles.
+Each required worksheet has its own dashboard with `City`, `CountyOrParish`,
+`PostalCode`, and `PropertySubType` dropdown filters. The workbook contains:
 
-The generated workbook was validated in Tableau Public 2026.1: the workbook
-DOM, packaged Hyper connection, nine-query dashboard batches, and all five
-worksheet computations completed successfully.
+1. `Close Price Dashboard`;
+2. `Days on Market Dashboard`;
+3. `List-to-Sale Ratio Dashboard`;
+4. `New Listings Dashboard`;
+5. `Closed Sales Dashboard`; and
+6. `Market Overview`, the custom dashboard combining all five measures.
+
+The three geographic fields have their matching Tableau geographic roles.
+
+The publishable workbook was validated in Tableau Public 2026.1: the workbook
+DOM, packaged Hyper connection, dashboard query batches, and all five worksheet
+computations completed successfully.
 
 See [`DATA_DICTIONARY.md`](DATA_DICTIONARY.md) for field roles and formatting.
 
 ## Data safety
 
-The Tableau CSV, Hyper, and TWBX files contain confidential row-level MLS
-information and remain local under `outputs/week8/`, which is excluded from
-Git. Only code, documentation, and aggregate validation charts are published.
+The source CSV and local working extracts remain under `outputs/week8/`, which
+is excluded from Git. The tracked `week8/market_analysis.twbx` uses a dedicated
+publishable Hyper extract that omits the direct identifiers `EventId` and
+`ListingKey`; it retains the pattern-level month, geography, property type, and
+market measures required for the assignment.
 
 ## Run
 
 ```bash
 python3 -m pip install -r requirements.txt
 python3 week8/tableau_data_prep.py
-python3 week8/build_market_analysis_workbook.py
+python3 week8/build_market_analysis_workbook.py --publish-copy
 ```
