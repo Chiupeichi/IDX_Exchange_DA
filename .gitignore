@@ -235,6 +235,7 @@ __marimo__/
 /DataAnalystInternship_Handbook.pdf
 /rets_property.sql
 .DS_Store
+.~*.twbr
 .Rhistory
 .RData
 .Rapp.history
