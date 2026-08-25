@@ -233,8 +233,13 @@ __marimo__/
 
 # Local documents and operating-system/session files
 /DataAnalystInternship_Handbook.pdf
+/AI_Agentic_Engineer_Intern_Handbook_2026_v2.pdf
 /rets_property.sql
+*.sql
+*.sqlite
+*.db
 .DS_Store
+.~*.twbr
 .Rhistory
 .RData
 .Rapp.history
