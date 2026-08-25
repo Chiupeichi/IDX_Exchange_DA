@@ -19,7 +19,7 @@ from xml.etree import ElementTree
 PROJECT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_CSV = PROJECT_DIR / "outputs" / "week8" / "tableau_market_events.csv"
 DEFAULT_OUTPUT = PROJECT_DIR / "outputs" / "week8" / "market_analysis.twbx"
-DEFAULT_PUBLISH_COPY = PROJECT_DIR / "week8" / "market_analysis.twbx"
+DEFAULT_PUBLISH_COPY = PROJECT_DIR / "week8-10" / "market_analysis.twbx"
 
 DATASOURCE = "federated.week8marketanalysis"
 CONNECTION = "hyper.week8marketevents"
@@ -668,7 +668,7 @@ def parse_args() -> argparse.Namespace:
         const=DEFAULT_PUBLISH_COPY,
         help=(
             "also copy the packaged workbook to a tracked deliverable path; "
-            "defaults to week8/market_analysis.twbx"
+            "defaults to week8-10/market_analysis.twbx"
         ),
     )
     return parser.parse_args()
