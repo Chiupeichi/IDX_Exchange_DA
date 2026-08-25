@@ -5,10 +5,10 @@ import sys
 import unittest
 from pathlib import Path
 
-PROJECT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(PROJECT_DIR / "src"))
+PROJECT_DIR = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(PROJECT_DIR))
 
-from idx_agentic.email_workflow import (  # noqa: E402
+from agentic.week11.email_workflow import (  # noqa: E402
     ApprovalError,
     EmailWorkflow,
     InMemoryEmailTransport,

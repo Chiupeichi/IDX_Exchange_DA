@@ -4,10 +4,10 @@ import sys
 import unittest
 from pathlib import Path
 
-PROJECT_DIR = Path(__file__).resolve().parents[1]
+PROJECT_DIR = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(PROJECT_DIR))
 
-from openclaw_entrypoint import handle_openclaw_message  # noqa: E402
+from agentic.week10.openclaw_entrypoint import handle_openclaw_message  # noqa: E402
 
 
 class OpenClawEntrypointTests(unittest.TestCase):

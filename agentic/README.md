@@ -1,6 +1,6 @@
 # Weeks 8-12 - AI Agentic Engineer Project
 
-This folder implements the revised 2026 Handbook curriculum through **Week 11**. It provides an offline-verifiable core for RAG, five-agent orchestration, WhatsApp message formatting, email drafting, explicit approval, and safety guardrails. Week 12 capstone packaging remains the next milestone.
+This folder implements the revised 2026 Handbook curriculum through **Week 11**. The Git structure is separated into [`week8/`](week8/), [`week9/`](week9/), [`week10/`](week10/), and [`week11/`](week11/). Week 12 capstone packaging remains the next milestone.
 
 ## Status against the revised Handbook
 
@@ -27,7 +27,7 @@ This folder implements the revised 2026 Handbook curriculum through **Week 11**.
 ## Run the offline demo
 
 ```bash
-python3 week8-12/run_demo.py
+python3 agentic/run_demo.py
 ```
 
 Example questions:
@@ -42,14 +42,14 @@ Draft a weekly market report for Pasadena
 ## Run the validation suite
 
 ```bash
-python3 -m unittest discover -s week8-12/tests -v
+python3 -m unittest discover -s agentic -p 'test_*.py' -v
 ```
 
 ## Connect production services
 
 1. Copy `.env.example` to `.env` and enter local credentials. `.env` is ignored by Git.
 2. Replace the fictional listing fixture with parameterized, read-only MySQL adapters for `rets_property` and `california_sold`.
-3. Import `handle_openclaw_message` from `openclaw_entrypoint.py` into the OpenClaw channel handler.
+3. Import `handle_openclaw_message` from `agentic/week10/openclaw_entrypoint.py` into the OpenClaw channel handler.
 4. Run `openclaw channels login --channel whatsapp` and scan the QR code in the user's own session.
 5. Use `SmtpEmailTransport` only after previewing the draft and receiving the exact approval phrase.
 

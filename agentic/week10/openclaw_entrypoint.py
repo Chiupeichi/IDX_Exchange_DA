@@ -11,10 +11,10 @@ import json
 import sys
 from pathlib import Path
 
-PROJECT_DIR = Path(__file__).resolve().parent
-sys.path.insert(0, str(PROJECT_DIR / "src"))
+PROJECT_DIR = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_DIR))
 
-from idx_agentic import build_application  # noqa: E402
+from agentic import build_application  # noqa: E402
 
 ORCHESTRATOR, WHATSAPP, EMAIL_WORKFLOW = build_application()
 

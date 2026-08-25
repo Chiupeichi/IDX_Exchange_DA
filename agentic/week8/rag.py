@@ -8,7 +8,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Iterable
 
-from .models import AgentResult, RetrievedChunk
+from ..models import AgentResult, RetrievedChunk
 
 TOKEN_RE = re.compile(r"[a-z0-9_]+", re.IGNORECASE)
 

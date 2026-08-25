@@ -5,9 +5,9 @@ from __future__ import annotations
 import re
 from dataclasses import asdict
 
-from .email_workflow import EmailWorkflow, SafetyPolicy
-from .knowledge import GroundedRAG
-from .models import AgentResult, Listing
+from ..models import AgentResult, Listing
+from ..week8.rag import GroundedRAG
+from ..week11.email_workflow import EmailWorkflow, SafetyPolicy
 
 
 class PropertySearchAgent:

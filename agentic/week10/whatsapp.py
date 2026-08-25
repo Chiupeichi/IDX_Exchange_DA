@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .models import AgentResult
-from .orchestrator import Orchestrator
+from ..models import AgentResult
+from ..week9.orchestrator import Orchestrator
 
 
 def format_for_whatsapp(result: AgentResult) -> str:

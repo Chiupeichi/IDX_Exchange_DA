@@ -2,7 +2,7 @@
 
 ## Revised 2026 AI Agentic Engineer curriculum
 
-The active Handbook now assigns Weeks 8-12 to an OpenClaw-based multi-agent real-estate assistant. The implementation through Week 11 is in [`week8-12/`](week8-12/): RAG, five-agent orchestration, a WhatsApp channel adapter, and approval-gated email workflows. The earlier Tableau submission remains in [`week8/`](week8/) for reference.
+The active Handbook now assigns Weeks 8-12 to an OpenClaw-based multi-agent real-estate assistant. The implementation through Week 11 is split into [`agentic/week8`](agentic/week8/), [`agentic/week9`](agentic/week9/), [`agentic/week10`](agentic/week10/), and [`agentic/week11`](agentic/week11/). The earlier Tableau submission remains in [`week8/`](week8/) for reference.
 
 ```mermaid
 flowchart LR
@@ -15,7 +15,7 @@ flowchart LR
 Validate the current agentic work with:
 
 ```bash
-python3 -m unittest discover -s week8-12/tests -v
+python3 -m unittest discover -s agentic -p 'test_*.py' -v
 ```
 
 ## Legacy Data Analyst project
@@ -70,7 +70,7 @@ The project is designed to help answer:
 | Weeks 4–5 | [`week4-5/`](week4-5/) | Data cleaning and quality flags |
 | Week 6 | [`week6/`](week6/) | Market metrics and segmented summaries |
 | Week 7 | [`week7/`](week7/) | IQR outlier flags and filtered analysis data |
-| Weeks 8-12 | [`week8-12/`](week8-12/) | Revised RAG, orchestration, WhatsApp, and email-agent curriculum |
+| Weeks 8-12 | [`agentic/`](agentic/) | Revised curriculum split into Week 8, 9, 10, and 11 modules |
 | Legacy Tableau work | [`week8/`](week8/) | Superseded dashboard work retained for reference |
 
 Each folder contains its own Python script(s), README, key results, and selected

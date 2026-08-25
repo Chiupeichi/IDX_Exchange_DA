@@ -12,7 +12,7 @@ from email.message import EmailMessage
 from typing import Protocol
 from uuid import uuid4
 
-from .models import EmailDraft
+from ..models import EmailDraft
 
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 

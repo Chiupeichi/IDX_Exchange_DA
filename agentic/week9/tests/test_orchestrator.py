@@ -4,10 +4,10 @@ import sys
 import unittest
 from pathlib import Path
 
-PROJECT_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(PROJECT_DIR / "src"))
+PROJECT_DIR = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(PROJECT_DIR))
 
-from idx_agentic.app import build_application  # noqa: E402
+from agentic.app import build_application  # noqa: E402
 
 
 class OrchestrationDeliverableTests(unittest.TestCase):

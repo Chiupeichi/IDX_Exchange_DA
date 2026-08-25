@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .agents import EmailDraftAgent, MarketStatsAgent, PropertySearchAgent, RAGAgent, RecommendationAgent
-from .models import AgentResult, Listing
+from ..models import AgentResult, Listing
 
 
 class IntentClassifier:

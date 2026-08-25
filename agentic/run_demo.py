@@ -5,9 +5,9 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from idx_agentic import build_application  # noqa: E402
+from agentic import build_application  # noqa: E402
 
 
 def main() -> None:
