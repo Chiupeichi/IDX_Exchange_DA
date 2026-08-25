@@ -148,6 +148,28 @@ The competitive workbook was validated in Tableau Public 2026.1: the workbook
 DOM loaded successfully, the packaged Hyper connection opened, all dashboard
 query batches completed, and the ZIP maps connected to Tableau geocoding.
 
+## Dashboard design and Tableau Public publishing checklist
+
+The workbooks follow the dashboard usability guidance for the Weeks 8–10
+submission:
+
+- all dashboards use a fixed **Desktop** layout of 1400 × 900 pixels;
+- each required market KPI has a focused dashboard, while the custom Market
+  Overview contains five charts;
+- agent and office rankings are separated from the ZIP maps, and the custom
+  Competitive Overview uses compact Top 25 summaries so labels remain readable;
+- ranking bars are sorted by value, measures use compact number formats, and
+  color is used consistently by metric;
+- dashboard filters are shared across the relevant views and include a clear
+  `(All)` option for resetting the selection.
+
+When publishing either `.twbx` file to Tableau Public, select **Show Sheets**
+in the publishing options. The underlying worksheets are intentionally hidden,
+so the visible sheet tabs will display all six Market Analysis dashboards or all
+five Competitive Analysis dashboards without exposing their component sheets.
+After publishing, verify that the dashboard tab bar is visible and that every
+dashboard can be opened from it.
+
 ## Data safety
 
 The source CSV and local working extracts remain under `outputs/week8/`, which
