@@ -1,4 +1,24 @@
-# IDX Exchange — Data Analyst Internship
+# IDX Exchange - Internship Projects
+
+## Revised 2026 AI Agentic Engineer curriculum
+
+The active Handbook now assigns Weeks 8-12 to an OpenClaw-based multi-agent real-estate assistant. The implementation through Week 11 is in [`week8-12/`](week8-12/): RAG, five-agent orchestration, a WhatsApp channel adapter, and approval-gated email workflows. The earlier Tableau submission remains in [`week8-10/`](week8-10/) for reference.
+
+```mermaid
+flowchart LR
+    A["Week 8 RAG"] --> B["Week 9 Orchestration"]
+    B --> C["Week 10 WhatsApp"]
+    C --> D["Week 11 Email + Safety"]
+    D --> E["Week 12 Capstone - next"]
+```
+
+Validate the current agentic work with:
+
+```bash
+python3 -m unittest discover -s week8-12/tests -v
+```
+
+## Legacy Data Analyst project
 
 An end-to-end California residential real-estate analytics project built from
 monthly CRMLS listing and sold records. The workflow turns confidential MLS
@@ -50,7 +70,8 @@ The project is designed to help answer:
 | Weeks 4–5 | [`week4-5/`](week4-5/) | Data cleaning and quality flags |
 | Week 6 | [`week6/`](week6/) | Market metrics and segmented summaries |
 | Week 7 | [`week7/`](week7/) | IQR outlier flags and filtered analysis data |
-| Weeks 8–10 | [`week8-10/`](week8-10/) | Tableau dashboards for market and competitive analysis |
+| Weeks 8-12 | [`week8-12/`](week8-12/) | Revised RAG, orchestration, WhatsApp, and email-agent curriculum |
+| Legacy Weeks 8-10 | [`week8-10/`](week8-10/) | Superseded Tableau dashboards retained for reference |
 
 Each folder contains its own Python script(s), README, key results, and selected
 aggregate charts where a visual is useful.
