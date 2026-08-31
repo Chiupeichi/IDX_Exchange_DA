@@ -1,0 +1,320 @@
+{
+  "geography": {
+    "city": "Irvine",
+    "county": "Orange",
+    "state": "California"
+  },
+  "data_coverage": {
+    "all_sales_start": "2024-01",
+    "all_sales_end": "2026-06",
+    "latest_complete_activity_month": "2026-04",
+    "current_trailing_12_months": [
+      "2025-05",
+      "2026-04"
+    ],
+    "prior_trailing_12_months": [
+      "2024-05",
+      "2025-04"
+    ]
+  },
+  "latest_month": {
+    "month": "2026-04",
+    "median_close_price": 1360000.0,
+    "average_days_on_market": 24.801526717557252,
+    "median_price_per_sq_ft": 767.9738562091503,
+    "average_close_to_original_list_ratio": 0.9820379455765453,
+    "new_listings": 330,
+    "closed_sales": 131,
+    "sales_volume": 184361719.0
+  },
+  "year_ago_month": {
+    "month": "2025-04",
+    "median_close_price": 1419500.0,
+    "average_days_on_market": 20.415254237288135,
+    "median_price_per_sq_ft": 812.6027709155175,
+    "average_close_to_original_list_ratio": 0.991817169093641,
+    "new_listings": 305,
+    "closed_sales": 118,
+    "sales_volume": 169095504.0
+  },
+  "current_trailing_12_months": {
+    "median_close_price": 1379995.0,
+    "average_days_on_market": 30.858016304347824,
+    "median_price_per_sq_ft": 780.7215864361788,
+    "average_close_to_original_list_ratio": 0.9719381313605382,
+    "new_listings": 2352,
+    "closed_sales": 1472,
+    "sales_volume": 2067847794.37
+  },
+  "prior_trailing_12_months": {
+    "median_close_price": 1420000.0,
+    "average_days_on_market": 21.821498371335505,
+    "median_price_per_sq_ft": 811.930405965203,
+    "average_close_to_original_list_ratio": 0.9945429902503351,
+    "new_listings": 2766,
+    "closed_sales": 1535,
+    "sales_volume": 2192657428.5
+  },
+  "changes": {
+    "median_close_price_yoy_pct": -4.191616766467066,
+    "days_on_market_yoy_days": 4.386272480269117,
+    "price_per_sq_ft_yoy_pct": -5.492094822183047,
+    "closed_sales_yoy_pct": 11.016949152542367,
+    "new_listings_yoy_pct": 8.196721311475418,
+    "trailing_12m_sales_volume_pct": -5.692162966623682
+  },
+  "top_agents": [
+    {
+      "name": "Cesi Pagano",
+      "sales_volume": 102495377.0,
+      "units_sold": 72
+    },
+    {
+      "name": "LESLIE OLIVO",
+      "sales_volume": 44971830.0,
+      "units_sold": 23
+    },
+    {
+      "name": "Irene Zhang",
+      "sales_volume": 37746600.0,
+      "units_sold": 25
+    },
+    {
+      "name": "Ronnie Hackett",
+      "sales_volume": 29814000.0,
+      "units_sold": 18
+    },
+    {
+      "name": "Michael Mei",
+      "sales_volume": 21409500.0,
+      "units_sold": 15
+    }
+  ],
+  "top_offices": [
+    {
+      "name": "Coldwell Banker Realty",
+      "sales_volume": 149186954.0,
+      "units_sold": 108
+    },
+    {
+      "name": "Real Broker",
+      "sales_volume": 147741820.0,
+      "units_sold": 105
+    },
+    {
+      "name": "Keller Williams Realty Irvine",
+      "sales_volume": 138381500.0,
+      "units_sold": 94
+    },
+    {
+      "name": "Keller Williams Realty",
+      "sales_volume": 120885376.0,
+      "units_sold": 86
+    },
+    {
+      "name": "Pinnacle Real Estate Group",
+      "sales_volume": 82051088.0,
+      "units_sold": 53
+    }
+  ],
+  "top_office_volume_share_pct": 7.2146003398403895,
+  "monthly": [
+    {
+      "month": "2024-01",
+      "median_close_price": 1265250.0,
+      "average_days_on_market": 21.14,
+      "new_listings": 171,
+      "closed_sales": 100
+    },
+    {
+      "month": "2024-02",
+      "median_close_price": 1386100.0,
+      "average_days_on_market": 16.921875,
+      "new_listings": 193,
+      "closed_sales": 128
+    },
+    {
+      "month": "2024-03",
+      "median_close_price": 1415000.0,
+      "average_days_on_market": 13.59748427672956,
+      "new_listings": 229,
+      "closed_sales": 159
+    },
+    {
+      "month": "2024-04",
+      "median_close_price": 1374444.0,
+      "average_days_on_market": 12.831325301204819,
+      "new_listings": 234,
+      "closed_sales": 166
+    },
+    {
+      "month": "2024-05",
+      "median_close_price": 1492000.0,
+      "average_days_on_market": 11.137724550898204,
+      "new_listings": 235,
+      "closed_sales": 167
+    },
+    {
+      "month": "2024-06",
+      "median_close_price": 1482500.0,
+      "average_days_on_market": 15.833333333333334,
+      "new_listings": 248,
+      "closed_sales": 150
+    },
+    {
+      "month": "2024-07",
+      "median_close_price": 1427500.0,
+      "average_days_on_market": 15.14,
+      "new_listings": 272,
+      "closed_sales": 150
+    },
+    {
+      "month": "2024-08",
+      "median_close_price": 1365000.0,
+      "average_days_on_market": 19.966216216216218,
+      "new_listings": 235,
+      "closed_sales": 148
+    },
+    {
+      "month": "2024-09",
+      "median_close_price": 1430000.0,
+      "average_days_on_market": 24.18018018018018,
+      "new_listings": 210,
+      "closed_sales": 111
+    },
+    {
+      "month": "2024-10",
+      "median_close_price": 1460000.0,
+      "average_days_on_market": 27.936,
+      "new_listings": 211,
+      "closed_sales": 125
+    },
+    {
+      "month": "2024-11",
+      "median_close_price": 1425000.0,
+      "average_days_on_market": 27.48872180451128,
+      "new_listings": 133,
+      "closed_sales": 133
+    },
+    {
+      "month": "2024-12",
+      "median_close_price": 1350000.0,
+      "average_days_on_market": 30.858407079646017,
+      "new_listings": 104,
+      "closed_sales": 113
+    },
+    {
+      "month": "2025-01",
+      "median_close_price": 1382500.0,
+      "average_days_on_market": 31.420454545454547,
+      "new_listings": 239,
+      "closed_sales": 88
+    },
+    {
+      "month": "2025-02",
+      "median_close_price": 1425000.0,
+      "average_days_on_market": 23.770642201834864,
+      "new_listings": 254,
+      "closed_sales": 109
+    },
+    {
+      "month": "2025-03",
+      "median_close_price": 1328000.0,
+      "average_days_on_market": 23.991869918699187,
+      "new_listings": 320,
+      "closed_sales": 123
+    },
+    {
+      "month": "2025-04",
+      "median_close_price": 1419500.0,
+      "average_days_on_market": 20.415254237288135,
+      "new_listings": 305,
+      "closed_sales": 118
+    },
+    {
+      "month": "2025-05",
+      "median_close_price": 1400000.0,
+      "average_days_on_market": 25.20769230769231,
+      "new_listings": 308,
+      "closed_sales": 130
+    },
+    {
+      "month": "2025-06",
+      "median_close_price": 1417495.0,
+      "average_days_on_market": 29.556451612903224,
+      "new_listings": 193,
+      "closed_sales": 124
+    },
+    {
+      "month": "2025-07",
+      "median_close_price": 1345000.0,
+      "average_days_on_market": 27.084745762711865,
+      "new_listings": 238,
+      "closed_sales": 118
+    },
+    {
+      "month": "2025-08",
+      "median_close_price": 1400000.0,
+      "average_days_on_market": 33.184397163120565,
+      "new_listings": 168,
+      "closed_sales": 141
+    },
+    {
+      "month": "2025-09",
+      "median_close_price": 1400000.0,
+      "average_days_on_market": 31.517006802721088,
+      "new_listings": 169,
+      "closed_sales": 147
+    },
+    {
+      "month": "2025-10",
+      "median_close_price": 1301700.0,
+      "average_days_on_market": 38.082089552238806,
+      "new_listings": 159,
+      "closed_sales": 134
+    },
+    {
+      "month": "2025-11",
+      "median_close_price": 1395000.0,
+      "average_days_on_market": 33.38317757009346,
+      "new_listings": 134,
+      "closed_sales": 107
+    },
+    {
+      "month": "2025-12",
+      "median_close_price": 1390000.0,
+      "average_days_on_market": 38.381443298969074,
+      "new_listings": 119,
+      "closed_sales": 97
+    },
+    {
+      "month": "2026-01",
+      "median_close_price": 1310000.0,
+      "average_days_on_market": 38.36046511627907,
+      "new_listings": 27,
+      "closed_sales": 86
+    },
+    {
+      "month": "2026-02",
+      "median_close_price": 1400000.0,
+      "average_days_on_market": 31.019801980198018,
+      "new_listings": 207,
+      "closed_sales": 101
+    },
+    {
+      "month": "2026-03",
+      "median_close_price": 1381500.0,
+      "average_days_on_market": 24.96153846153846,
+      "new_listings": 300,
+      "closed_sales": 156
+    },
+    {
+      "month": "2026-04",
+      "median_close_price": 1360000.0,
+      "average_days_on_market": 24.801526717557252,
+      "new_listings": 330,
+      "closed_sales": 131
+    }
+  ],
+  "methodology": "Cleaned Residential records after Week 7 IQR filtering. April 2026 is used as the latest complete activity month because May-June 2026 new-listing coverage is incomplete; closed-sale coverage extends through June 2026."
+}
