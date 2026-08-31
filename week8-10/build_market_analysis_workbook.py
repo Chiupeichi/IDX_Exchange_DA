@@ -434,7 +434,7 @@ def market_overview_dashboard_xml() -> str:
     zones.append("        </zone>")
     return f"""    <dashboard enable-sort-zone-taborder='true' name='Market Overview'>
       <layout-options>
-        <title><formatted-text><run fontname='Tableau Semibold' fontsize='18'>San Diego Residential Market Overview</run></formatted-text></title>
+        <title><formatted-text><run fontname='Tableau Semibold' fontsize='18'>Residential Market Overview</run></formatted-text></title>
       </layout-options>
       <style />
       <size maxheight='900' maxwidth='1400' minheight='900' minwidth='1400' sizing-mode='fixed' />

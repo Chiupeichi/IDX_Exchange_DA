@@ -506,7 +506,7 @@ def overview_dashboard_xml() -> str:
         "        </zone>",
     ]
     return f"""    <dashboard enable-sort-zone-taborder='true' name='Competitive Overview'>
-      <layout-options><title><formatted-text><run fontname='Tableau Semibold' fontsize='16'>San Diego Residential Competitive Overview</run></formatted-text></title></layout-options>
+      <layout-options><title><formatted-text><run fontname='Tableau Semibold' fontsize='16'>Residential Competitive Overview</run></formatted-text></title></layout-options>
       <style />
       <size maxheight='900' maxwidth='1400' minheight='900' minwidth='1400' sizing-mode='fixed' />
       <datasources><datasource caption='Week 8 Competitive Sales' name='{DATASOURCE}' /></datasources>

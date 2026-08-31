@@ -1,3 +1,4 @@
 pandas>=2.2,<3.0
 matplotlib>=3.9,<4.0
 tableauhyperapi>=0.0.26225
+reportlab>=4.2,<5.0

@@ -51,6 +51,7 @@ The project is designed to help answer:
 | Week 6 | [`week6/`](week6/) | Market metrics and segmented summaries |
 | Week 7 | [`week7/`](week7/) | IQR outlier flags and filtered analysis data |
 | Weeks 8–10 | [`week8-10/`](week8-10/) | Tableau dashboards for market and competitive analysis |
+| Weeks 11–12 | [`week11-12/`](week11-12/) | Irvine market intelligence report and five-minute presentation |
 
 Each folder contains its own Python script(s), README, key results, and selected
 aggregate charts where a visual is useful.
@@ -90,6 +91,8 @@ python3 week4-5/data_cleaning.py
 python3 week6/feature_engineering.py
 python3 week7/outlier_detection.py
 python3 week8-10/tableau_data_prep.py
+python3 week11-12/market_intelligence_analysis.py
+python3 week11-12/build_market_intelligence_report.py
 ```
 
 The current local analysis covers January 2024 through June 2026. Week 1
