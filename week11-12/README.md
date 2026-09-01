@@ -1,19 +1,12 @@
 # Weeks 11–12 — Final Market Intelligence Package
 
-This folder completes the final reporting phase of the Data Analyst project. It
-turns the cleaned Residential Tableau datasets into a focused Irvine, Orange
-County market brief and a five-minute presentation.
+This folder contains the Irvine, Orange County market analysis built from the
+cleaned Residential Tableau datasets.
 
 ## Deliverables
 
-- [`irvine_market_intelligence_report.pdf`](irvine_market_intelligence_report.pdf)
-  — one-page market intelligence report.
-- [`irvine_market_presentation.pptx`](irvine_market_presentation.pptx)
-  — six-slide presentation with an English talk track in the speaker notes.
-- [`PRESENTATION_NOTES.md`](PRESENTATION_NOTES.md) — copy of the talk track for
-  practice and live delivery.
 - [`irvine_market_metrics.json`](irvine_market_metrics.json) — aggregate values
-  used by both final artifacts.
+  used by the Irvine market analysis.
 - [`market_intelligence_analysis.py`](market_intelligence_analysis.py) — creates
   the aggregate metrics from the Week 8–10 Tableau-ready data.
 - [`build_market_intelligence_report.py`](build_market_intelligence_report.py) —
@@ -72,4 +65,4 @@ from Git because they contain confidential working data.
 3. Confirm the dashboard size is Desktop / 1400 × 900.
 4. Open each published workbook and test all city, county, ZIP code,
    PropertySubType, and month filters.
-5. Submit both Tableau Public URLs together with the PDF and presentation.
+5. Submit both Tableau Public URLs.
